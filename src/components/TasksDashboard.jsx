@@ -199,41 +199,42 @@ const TasksDashboard = () => {
           <div className="bg-white p-6 rounded-lg shadow-lg w-1/3">
             <form onSubmit={handleUpdate} className=" grid  gap-4 items-center">
               <div>
+                <label className="block text-sm font-medium">Title</label>
+                <input
+                  type="text"
+                  name="hours"
+                  defaultValue={selectedTask?.hours}
+                  required
+                  maxLength="50"
+                  placeholder="Enter title (max 50 characters)"
+                  className="w-full p-2 border rounded"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium">Timestamp</label>
+                <input
+                  type="datetime-local"
+                  name="date"
+                  value={getLocalDateTime()}
+                  readOnly
+                  className="border px-3 py-2 rounded w-full bg-gray-100 text-gray-500"
+                />
+              </div>
+              <div>
                 <label className="block text-sm font-medium">
                   Tasks Category
                 </label>
                 <select
                   name="tasks"
-                  required
-                  className="w-full p-2 border rounded"
                   defaultValue={selectedTask?.tasks}
-                >
-                  <option value="Sales">Sales</option>
-                  <option value="Support">Support</option>
-                  <option value="Content">Content</option>
-                  <option value="Paper-work">Paper-work</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium">Hours</label>
-                <input
-                  type="number"
-                  name="hours"
                   required
                   className="w-full p-2 border rounded"
-                  defaultValue={selectedTask?.hours}
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium">Date</label>
-                <input
-                  type="date"
-                  name="date"
-                  className="border px-3 py-2 rounded w-full"
-                  defaultValue={selectedTask?.date}
-                />
+                >
+                  <option value="To-Do">To-Do</option>
+                  <option value="In Progress">In Progress</option>
+                  <option value="Done">Done</option>
+                </select>
               </div>
               <div>
                 <button
