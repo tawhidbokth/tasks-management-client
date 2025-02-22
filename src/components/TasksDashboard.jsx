@@ -3,6 +3,7 @@ import { useContext, useState } from 'react';
 import axios from 'axios';
 import { AuthContext } from '../Provider/AuthProvider';
 import useTasks from '../Hooks/useTasks';
+import Navbar from './Navbar';
 
 const TasksDashboard = () => {
   const [tasks, refetch] = useTasks();
@@ -11,8 +12,8 @@ const TasksDashboard = () => {
   const { user } = useContext(AuthContext);
   const getLocalDateTime = () => {
     const now = new Date();
-    now.setMinutes(now.getMinutes() - now.getTimezoneOffset()); // লোকাল টাইম ঠিক করা
-    return now.toISOString().slice(0, 16); // "YYYY-MM-DDTHH:MM" ফরম্যাটে রূপান্তর
+    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+    return now.toISOString().slice(0, 16);
   };
 
   const handleSubmit = e => {
@@ -37,7 +38,7 @@ const TasksDashboard = () => {
             showConfirmButton: false,
             timer: 1500,
           });
-          refetch(); // নতুন টাস্ক দেখানোর জন্য refetch কল করুন
+          refetch();
         }
       })
       .catch(error => {
@@ -105,11 +106,12 @@ const TasksDashboard = () => {
   };
 
   return (
-    <div className="p-6 bg-gray-100 shadow-md rounded-lg overflow-x-auto h-[600px]">
-      <h1 className="text-4xl font-bold text-yellow-700 mb-4 text-center">
-        Work Sheet
+    <div className="p-6 bg-gray-100 shadow-md rounded-lg  h-auto">
+      <Navbar></Navbar>
+      <h1 className="lg:text-4xl text-2xl font-bold text-yellow-700 mb-4 text-center">
+        Task Management Application
       </h1>
-      <div className="w-1/2 mx-auto my-8 p-6 bg-white shadow-md rounded-md">
+      <div className="lg:w-1/2 mx-auto my-8 p-6 bg-white shadow-md rounded-md">
         <form
           onSubmit={handleSubmit}
           className=" grid lg:grid-cols-1 gap-4 items-center"
@@ -118,7 +120,7 @@ const TasksDashboard = () => {
             <label className="block text-sm font-medium">Title</label>
             <input
               type="text"
-              name="hours"
+              name="title"
               required
               maxLength="50"
               placeholder="Enter title (max 50 characters)"
@@ -130,7 +132,7 @@ const TasksDashboard = () => {
             <label className="block text-sm font-medium">Timestamp</label>
             <input
               type="datetime-local"
-              name="date"
+              name="dateTime"
               value={getLocalDateTime()}
               readOnly
               className="border px-3 py-2 rounded w-full bg-gray-100 text-gray-500"
@@ -138,7 +140,11 @@ const TasksDashboard = () => {
           </div>
           <div>
             <label className="block text-sm font-medium">Tasks Category</label>
-            <select name="tasks" required className="w-full p-2 border rounded">
+            <select
+              name="status"
+              required
+              className="w-full p-2 border rounded"
+            >
               <option value="To-Do">To-Do</option>
               <option value="In Progress">In Progress</option>
               <option value="Done">Done</option>
@@ -156,28 +162,31 @@ const TasksDashboard = () => {
         </form>
       </div>
       {/* Table */}
-      <table className="table-auto w-3/4 border mx-auto ">
-        <thead>
-          <tr className="bg-gray-200">
-            <th className="border px-4 py-2">Titel</th>
-            <th className="border px-4 py-2">Status</th>
-            <th className="border px-4 py-2">Time And Date</th>
-            <th className="border px-4 py-2">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {tasks.map(t => (
-            <tr key={t._id}>
-              <td className="border px-4 py-2">{t.hours}</td>
-              <td className="border px-4 py-2">{t.tasks}</td>
-              <td className="border px-4 py-2">{t.date}</td>
-              <td className="border px-4 py-2 flex gap-2">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
+        {tasks.map(t => {
+          const bgColor =
+            t.status === 'To-Do'
+              ? 'bg-yellow-200'
+              : t.status === 'In Progress'
+              ? 'bg-blue-200'
+              : 'bg-green-200';
+
+          return (
+            <div
+              key={t._id}
+              className={`border rounded-lg shadow-md p-4 ${bgColor}`}
+            >
+              <h3 className="text-lg font-semibold text-gray-800">{t.title}</h3>
+              <p className="text-gray-800 font-medium">📌 {t.status}</p>
+              <p className="text-sm text-gray-600">🕒 {t.dateTime}</p>
+
+              <div className="flex justify-between mt-3">
                 <button
                   onClick={() => {
-                    setSelectedTask(t); // Set the selected task data
-                    setShowSalaryModal(true); // Show the update modal
+                    setSelectedTask(t);
+                    setShowSalaryModal(true);
                   }}
-                  className="btn btn-link text-blue-500 flex items-center justify-center gap-2"
+                  className="btn btn-sm text-blue-500 flex items-center gap-1"
                 >
                   🖊 Update
                 </button>
@@ -186,24 +195,24 @@ const TasksDashboard = () => {
                   onClick={() => handleDelete(t._id)}
                   className="text-red-500 hover:underline"
                 >
-                  ❌
+                  ❌ Delete
                 </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+              </div>
+            </div>
+          );
+        })}
+      </div>
 
       {showSalaryModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-1/3">
+          <div className="bg-white p-6 rounded-lg shadow-lg lg:w-1/3">
             <form onSubmit={handleUpdate} className=" grid  gap-4 items-center">
               <div>
                 <label className="block text-sm font-medium">Title</label>
                 <input
                   type="text"
-                  name="hours"
-                  defaultValue={selectedTask?.hours}
+                  name="title"
+                  defaultValue={selectedTask?.title}
                   required
                   maxLength="50"
                   placeholder="Enter title (max 50 characters)"
@@ -215,7 +224,7 @@ const TasksDashboard = () => {
                 <label className="block text-sm font-medium">Timestamp</label>
                 <input
                   type="datetime-local"
-                  name="date"
+                  name="dateTime"
                   value={getLocalDateTime()}
                   readOnly
                   className="border px-3 py-2 rounded w-full bg-gray-100 text-gray-500"
@@ -226,8 +235,8 @@ const TasksDashboard = () => {
                   Tasks Category
                 </label>
                 <select
-                  name="tasks"
-                  defaultValue={selectedTask?.tasks}
+                  name="status"
+                  defaultValue={selectedTask?.status}
                   required
                   className="w-full p-2 border rounded"
                 >

@@ -11,7 +11,7 @@ const Login = () => {
   const handleGoogleLogin = async () => {
     try {
       await signInWithGoogle();
-      navigate('/dashboard'); // 🔥 Redirect after login
+      navigate('/'); // 🔥 Redirect after login
     } catch (error) {
       console.error('Login failed:', error);
     }
