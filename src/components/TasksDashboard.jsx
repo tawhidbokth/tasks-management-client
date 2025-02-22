@@ -28,7 +28,7 @@ const TasksDashboard = () => {
     };
 
     axios
-      .post('http://localhost:5000/tasks', finalData)
+      .post('https://tasks-managment-server.vercel.app/tasks', finalData)
       .then(data => {
         if (data.data.insertedId) {
           Swal.fire({
@@ -64,16 +64,18 @@ const TasksDashboard = () => {
       confirmButtonText: 'Yes, delete it!',
     }).then(result => {
       if (result.isConfirmed) {
-        axios.delete(`http://localhost:5000/tasks/${id}`).then(res => {
-          if (res.data.deletedCount > 0) {
-            refetch();
-            Swal.fire({
-              title: 'Deleted!',
-              text: 'Task has been deleted.',
-              icon: 'success',
-            });
-          }
-        });
+        axios
+          .delete(`https://tasks-managment-server.vercel.app/tasks/${id}`)
+          .then(res => {
+            if (res.data.deletedCount > 0) {
+              refetch();
+              Swal.fire({
+                title: 'Deleted!',
+                text: 'Task has been deleted.',
+                icon: 'success',
+              });
+            }
+          });
       }
     });
   };
@@ -89,7 +91,10 @@ const TasksDashboard = () => {
     const updatedData = Object.fromEntries(formData.entries());
 
     axios
-      .put(`http://localhost:5000/tasks/${selectedTask._id}`, updatedData)
+      .put(
+        `https://tasks-managment-server.vercel.app/tasks/${selectedTask._id}`,
+        updatedData
+      )
       .then(data => {
         if (data.data.modifiedCount > 0) {
           Swal.fire({
