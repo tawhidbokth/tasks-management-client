@@ -1,0 +1,51 @@
+// export const tasksData = [
+//   {
+//     id: '1',
+//     title: 'Complete React Project',
+//     description: 'Finish the task management system using React.',
+//     timestamp: new Date().toISOString(),
+//     category: 'To-Do',
+//   },
+//   {
+//     id: '2',
+//     title: 'Fix UI Bugs',
+//     description: 'Resolve design issues in the dashboard.',
+//     timestamp: new Date().toISOString(),
+//     category: 'In Progress',
+//   },
+//   {
+//     id: '3',
+//     title: 'Deploy Application',
+//     description: 'Deploy the project to Vercel or Netlify.',
+//     timestamp: new Date().toISOString(),
+//     category: 'Done',
+//   },
+//   {
+//     id: '4',
+//     title: 'Deploy Application',
+//     description: 'Deploy the project to Vercel or Netlify.',
+//     timestamp: new Date().toISOString(),
+//     category: 'Done',
+//   },
+//   {
+//     id: '5',
+//     title: 'Deploy Application',
+//     description: 'Deploy the project to Vercel or Netlify.',
+//     timestamp: new Date().toISOString(),
+//     category: 'Done',
+//   },
+//   {
+//     id: '6',
+//     title: 'Deploy Application',
+//     description: 'Deploy the project to Vercel or Netlify.',
+//     timestamp: new Date().toISOString(),
+//     category: 'Done',
+//   },
+//   {
+//     id: '7',
+//     title: 'Deploy Application',
+//     description: 'Deploy the project to Vercel or Netlify.',
+//     timestamp: new Date().toISOString(),
+//     category: 'Done',
+//   },
+// ];

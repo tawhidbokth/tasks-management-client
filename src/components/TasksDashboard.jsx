@@ -1,7 +1,6 @@
 import Swal from 'sweetalert2';
-import { useContext, useState, useEffect } from 'react';
+import { useContext, useState } from 'react';
 import axios from 'axios';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { AuthContext } from '../Provider/AuthProvider';
 import Navbar from './Navbar';
 import useTasks from '../Hooks/useTasks';
@@ -115,36 +114,6 @@ const TasksDashboard = () => {
       });
   };
 
-  // Handle drag-and-drop
-  const onDragEnd = async result => {
-    const { source, destination, draggableId } = result;
-
-    if (!destination) return; // Dropped outside the list
-    if (
-      source.droppableId === destination.droppableId &&
-      source.index === destination.index
-    )
-      return;
-
-    // Find the task being dragged
-    const task = tasks.find(t => t._id === draggableId);
-
-    // Update task status if moved to a different category
-    if (source.droppableId !== destination.droppableId) {
-      task.status = destination.droppableId;
-      await axios.put(
-        `https://tasks-managment-server.vercel.app/tasks/${task._id}`,
-        task
-      );
-    }
-
-    // Reorder tasks
-    const updatedTasks = [...tasks];
-    updatedTasks.splice(source.index, 1);
-    updatedTasks.splice(destination.index, 0, task);
-    tasks(updatedTasks);
-  };
-
   // Group tasks by status
   const groupedTasks = tasks.reduce((acc, task) => {
     if (!acc[task.status]) acc[task.status] = [];
@@ -209,71 +178,52 @@ const TasksDashboard = () => {
       </div>
 
       {/* Drag-and-Drop Board */}
-      <DragDropContext onDragEnd={onDragEnd}>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
-          {['To-Do', 'In Progress', 'Done'].map(status => (
-            <Droppable key={status} droppableId={status}>
-              {provided => (
-                <div
-                  ref={provided.innerRef}
-                  {...provided.droppableProps}
-                  className="border rounded-lg shadow-md p-4 bg-gray-50"
-                >
-                  <h2 className="text-xl font-bold mb-4">{status}</h2>
-                  {groupedTasks[status]?.map((task, index) => (
-                    <Draggable
-                      key={task._id}
-                      draggableId={task._id}
-                      index={index}
-                    >
-                      {provided => (
-                        <div
-                          ref={provided.innerRef}
-                          {...provided.draggableProps}
-                          {...provided.dragHandleProps}
-                          className={`p-4 mb-4 rounded-lg shadow-sm ${
-                            status === 'To-Do'
-                              ? 'bg-yellow-200'
-                              : status === 'In Progress'
-                              ? 'bg-blue-200'
-                              : 'bg-green-200'
-                          }`}
-                        >
-                          <h3 className="text-lg font-semibold text-gray-800">
-                            {task.title}
-                          </h3>
-                          <p className="text-gray-600">{task.description}</p>
-                          <p className="text-sm text-gray-600">
-                            🕒 {task.dateTime}
-                          </p>
-                          <div className="flex justify-between mt-3">
-                            <button
-                              onClick={() => {
-                                setSelectedTask(task);
-                                setShowModal(true);
-                              }}
-                              className="btn btn-sm text-blue-500 flex items-center gap-1"
-                            >
-                              🖊 Edit
-                            </button>
-                            <button
-                              onClick={() => handleDelete(task._id)}
-                              className="text-red-500 hover:underline"
-                            >
-                              ❌ Delete
-                            </button>
-                          </div>
-                        </div>
-                      )}
-                    </Draggable>
-                  ))}
-                  {provided.placeholder}
+      {/* Task Board Without Drag & Drop */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
+        {['To-Do', 'In Progress', 'Done'].map(status => (
+          <div
+            key={status}
+            className="border rounded-lg shadow-md p-4 bg-gray-50"
+          >
+            <h2 className="text-xl font-bold mb-4">{status}</h2>
+            {(groupedTasks[status] || []).map(task => (
+              <div
+                key={task._id}
+                className={`p-4 mb-4 rounded-lg shadow-sm ${
+                  status === 'To-Do'
+                    ? 'bg-yellow-200'
+                    : status === 'In Progress'
+                    ? 'bg-blue-200'
+                    : 'bg-green-200'
+                }`}
+              >
+                <h3 className="text-lg font-semibold text-gray-800">
+                  {task.title}
+                </h3>
+                <p className="text-gray-600">{task.description}</p>
+                <p className="text-sm text-gray-600">🕒 {task.dateTime}</p>
+                <div className="flex justify-between mt-3">
+                  <button
+                    onClick={() => {
+                      setSelectedTask(task);
+                      setShowModal(true);
+                    }}
+                    className="btn btn-sm text-blue-500 flex items-center gap-1"
+                  >
+                    🖊 Edit
+                  </button>
+                  <button
+                    onClick={() => handleDelete(task._id)}
+                    className="text-red-500 hover:underline"
+                  >
+                    ❌ Delete
+                  </button>
                 </div>
-              )}
-            </Droppable>
-          ))}
-        </div>
-      </DragDropContext>
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
 
       {showModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
